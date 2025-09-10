@@ -1,8 +1,137 @@
-<!DOCCTYPE html>
-<html>
-<head><title> My Portfolio </title></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Abstract Factory Pattern Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    select, button {
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
 <body>
-<h1> Hello! iam budding SE </h1>
-<p> This is my first web page using Git. </p>
+  <h1>Abstract Factory Pattern Example</h1>
+
+  <label>Select Category:</label>
+  <select id="category">
+    <option value="payment">Payment</option>
+    <option value="loan">Loan</option>
+    <option value="shipping">Shipping</option>
+  </select>
+
+  <label>Select Type:</label>
+  <select id="type"></select>
+
+  <button onclick="createProduct()">Create</button>
+
+  <div class="output" id="output"></div>
+
+  <script>
+    // ===== Abstract Factories =====
+    class PaymentFactory {
+      create(type) {
+        if (type === "UPI") return new UPI();
+        if (type === "Wallet") return new Wallet();
+        if (type === "COD") return new COD();
+        if (type === "CreditCard") return new CreditCard();
+      }
+      getTypes() {
+        return ["UPI", "Wallet", "COD", "CreditCard"];
+      }
+    }
+
+    class LoanFactory {
+      create(type) {
+        if (type === "HomeLoan") return new HomeLoan();
+        if (type === "CarLoan") return new CarLoan();
+        if (type === "EducationLoan") return new EducationLoan();
+      }
+      getTypes() {
+        return ["HomeLoan", "CarLoan", "EducationLoan"];
+      }
+    }
+
+    class ShippingFactory {
+      create(type) {
+        if (type === "Standard") return new StandardShipping();
+        if (type === "Express") return new ExpressShipping();
+        if (type === "International") return new InternationalShipping();
+      }
+      getTypes() {
+        return ["Standard", "Express", "International"];
+      }
+    }
+
+    // ===== Products =====
+    // Payments
+    class UPI { info() { return "Payment via UPI selected."; } }
+    class Wallet { info() { return "Payment via Wallet selected."; } }
+    class COD { info() { return "Cash on Delivery selected."; } }
+    class CreditCard { info() { return "Payment via Credit Card selected."; } }
+
+    // Loans
+    class HomeLoan { info() { return "Home Loan Created."; } }
+    class CarLoan { info() { return "Car Loan Created."; } }
+    class EducationLoan { info() { return "Education Loan Created."; } }
+
+    // Shipping
+    class StandardShipping { info() { return "Standard Shipping selected."; } }
+    class ExpressShipping { info() { return "Express Shipping selected."; } }
+    class InternationalShipping { info() { return "International Shipping selected."; } }
+
+    // ===== Abstract Factory Selector =====
+    class FactoryProducer {
+      static getFactory(category) {
+        if (category === "payment") return new PaymentFactory();
+        if (category === "loan") return new LoanFactory();
+        if (category === "shipping") return new ShippingFactory();
+      }
+    }
+
+    // ===== UI Logic =====
+    const categorySelect = document.getElementById("category");
+    const typeSelect = document.getElementById("type");
+    const output = document.getElementById("output");
+
+    function updateTypes() {
+      const factory = FactoryProducer.getFactory(categorySelect.value);
+      const types = factory.getTypes();
+
+      typeSelect.innerHTML = "";
+      types.forEach(t => {
+        const option = document.createElement("option");
+        option.value = t;
+        option.textContent = t;
+        typeSelect.appendChild(option);
+      });
+    }
+
+    function createProduct() {
+      const factory = FactoryProducer.getFactory(categorySelect.value);
+      const product = factory.create(typeSelect.value);
+      output.textContent = product.info();
+    }
+
+    // Initialize
+    updateTypes();
+    categorySelect.addEventListener("change", updateTypes);
+  </script>
 </body>
 </html>
